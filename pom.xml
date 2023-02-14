@@ -5,17 +5,17 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.3</version>
+		<version>2.7.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>dual.transacciones</groupId>
 	<artifactId>superheroes-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>superheroes-api</name>
 	<description>Mi API REST de superheroes</description>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

@@ -1,6 +1,6 @@
-package dual.transacciones.superheroes.modelo;
+package dual.transacciones.superheroes.dao.modelo;
 
-public class DebilidadBean {
+public class Debilidad {
 
 	private long identificador;
 	

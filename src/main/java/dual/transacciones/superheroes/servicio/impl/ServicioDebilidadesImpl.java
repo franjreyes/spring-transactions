@@ -1,14 +1,15 @@
-package dual.transacciones.superheroes.servicio;
+package dual.transacciones.superheroes.servicio.impl;
 
 import java.util.List;
 
+import dual.transacciones.superheroes.servicio.ServicioDebilidades;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import dual.transacciones.superheroes.modelo.DebilidadBean;
-import dual.transacciones.superheroes.repositorio.RepositorioDebilidades;
+import dual.transacciones.superheroes.dao.modelo.Debilidad;
+import dual.transacciones.superheroes.dao.RepositorioDebilidades;
 
 @Service
 @Transactional(propagation = Propagation.MANDATORY)
@@ -18,12 +19,12 @@ public class ServicioDebilidadesImpl implements ServicioDebilidades {
 	private RepositorioDebilidades repositorio;
 	
 	@Override
-	public List<DebilidadBean> consultar(long identificadorHeroe) {
+	public List<Debilidad> consultar(long identificadorHeroe) {
 		return this.repositorio.consultar(identificadorHeroe);
 	}
 
 	@Override
-	public void crear(long identificadorHeroe, List<DebilidadBean> debilidades) {
+	public void crear(long identificadorHeroe, List<Debilidad> debilidades) {
 		this.repositorio.crear(identificadorHeroe, debilidades);
 	}
 

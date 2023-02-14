@@ -2,17 +2,18 @@ package dual.transacciones.superheroes.servicio;
 
 import java.util.List;
 
-import dual.transacciones.superheroes.modelo.SuperheroeBean;
+import dual.transacciones.superheroes.dao.modelo.Superheroe;
+import dual.transacciones.superheroes.excepciones.SuperheroeException;
 
 public interface ServicioSuperheroes {
 
-	List<SuperheroeBean> consultar();
+	List<Superheroe> consultar();
 	
-	SuperheroeBean consultar(long identificador) throws SuperheroeException;
+	Superheroe consultar(long identificador) throws SuperheroeException;
 	
-	void crear(SuperheroeBean superheroe) throws SuperheroeException;
+	void crear(Superheroe superheroe) throws SuperheroeException;
 
-	void modificar(SuperheroeBean superheroe) throws SuperheroeException;
+	void modificar(Superheroe superheroe) throws SuperheroeException;
 
 	void eliminar(long identificador) throws SuperheroeException;
 

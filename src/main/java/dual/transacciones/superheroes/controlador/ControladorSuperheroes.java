@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dual.transacciones.superheroes.modelo.SuperheroeBean;
-import dual.transacciones.superheroes.servicio.ImagenException;
+import dual.transacciones.superheroes.dao.modelo.Superheroe;
+import dual.transacciones.superheroes.excepciones.ImagenException;
 import dual.transacciones.superheroes.servicio.ServicioSuperheroes;
-import dual.transacciones.superheroes.servicio.SuperheroeException;
+import dual.transacciones.superheroes.excepciones.SuperheroeException;
 
 @RestController
 @RequestMapping("/superheroes")
@@ -27,7 +27,7 @@ public class ControladorSuperheroes {
 	private ServicioSuperheroes servicio;
 	
 	@GetMapping
-	public List<SuperheroeBean> consultar(){
+	public List<Superheroe> consultar(){
 		return this.servicio.consultar();
 	}
 
@@ -43,7 +43,7 @@ public class ControladorSuperheroes {
 	}
 
 	@PostMapping
-	public ResponseEntity<String> crear(@RequestBody SuperheroeBean superheroe) {
+	public ResponseEntity<String> crear(@RequestBody Superheroe superheroe) {
 		try {
 			this.servicio.crear(superheroe);
 		
@@ -62,7 +62,7 @@ public class ControladorSuperheroes {
 	}
 
 	@PatchMapping
-	public ResponseEntity<String> modificar(@RequestBody SuperheroeBean superheroe) {
+	public ResponseEntity<String> modificar(@RequestBody Superheroe superheroe) {
 		try {
 			this.servicio.modificar(superheroe);
 

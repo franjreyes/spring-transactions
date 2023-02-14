@@ -1,12 +1,14 @@
-package dual.transacciones.superheroes.repositorio;
+package dual.transacciones.superheroes.dao.impl;
 
 import java.util.List;
 
+import dual.transacciones.superheroes.dao.RepositorioDebilidades;
+import dual.transacciones.superheroes.dao.mapper.MapperDebilidad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import dual.transacciones.superheroes.modelo.DebilidadBean;
+import dual.transacciones.superheroes.dao.modelo.Debilidad;
 
 @Repository
 public class RepositorioDebilidadesImpl implements RepositorioDebilidades {
@@ -15,7 +17,7 @@ public class RepositorioDebilidadesImpl implements RepositorioDebilidades {
 	private JdbcTemplate template;
 	
 	@Override
-	public List<DebilidadBean> consultar(long identificadorHeroe) {
+	public List<Debilidad> consultar(long identificadorHeroe) {
 		try {
 			return this.template.query("SELECT ID, DEBILIDAD "
 					+ "FROM HEROE_DEBILIDAD HD "
@@ -29,7 +31,7 @@ public class RepositorioDebilidadesImpl implements RepositorioDebilidades {
 	}
 
 	@Override
-	public void crear(long identificadorHeroe, List<DebilidadBean> debilidades) {
+	public void crear(long identificadorHeroe, List<Debilidad> debilidades) {
 		try {
 			
 			debilidades.stream().forEach( debilidad -> {

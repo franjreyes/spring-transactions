@@ -1,20 +1,22 @@
-package dual.transacciones.superheroes.repositorio;
+package dual.transacciones.superheroes.dao.impl;
 
 import java.util.List;
 
+import dual.transacciones.superheroes.dao.RepositorioSuperheroes;
+import dual.transacciones.superheroes.dao.mapper.MapperSuperheroe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import dual.transacciones.superheroes.modelo.SuperheroeBean;
+import dual.transacciones.superheroes.dao.modelo.Superheroe;
 
 @Repository
-public class RepositorioSuperheroesImpl implements RepositorioSuperheroes{
+public class RepositorioSuperheroesImpl implements RepositorioSuperheroes {
 
 	@Autowired
 	private JdbcTemplate template;
 	
-	public List<SuperheroeBean> consultar() {
+	public List<Superheroe> consultar() {
 		try {
 			return this.template.query("select * from superheroes", new MapperSuperheroe());
 		} 
@@ -25,7 +27,7 @@ public class RepositorioSuperheroesImpl implements RepositorioSuperheroes{
 	}
 
 	@Override
-	public SuperheroeBean consultar(long identificador) {
+	public Superheroe consultar(long identificador) {
 		try {
 			return this.template.queryForObject("select * from superheroes where id = ?", 
 					new MapperSuperheroe(), identificador);
@@ -37,7 +39,7 @@ public class RepositorioSuperheroesImpl implements RepositorioSuperheroes{
 	}
 
 	@Override
-	public void crear(SuperheroeBean superheroe) {
+	public void crear(Superheroe superheroe) {
 		try {
 			this.template.update("INSERT INTO SUPERHEROES VALUES(?,?,?,?)", 
 					superheroe.getIdentificador(), 
@@ -51,7 +53,7 @@ public class RepositorioSuperheroesImpl implements RepositorioSuperheroes{
 	}
 
 	@Override
-	public void modificar(SuperheroeBean superheroe) {
+	public void modificar(Superheroe superheroe) {
 		try {
 			this.template.update("UPDATE SUPERHEROES SET NOMBRE = ?, "
 					+ "ALTEREGO = ?, IMG = ? WHERE ID = ?", 

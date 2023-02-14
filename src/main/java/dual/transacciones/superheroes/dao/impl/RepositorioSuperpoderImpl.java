@@ -1,21 +1,23 @@
-package dual.transacciones.superheroes.repositorio;
+package dual.transacciones.superheroes.dao.impl;
 
 import java.util.List;
 
+import dual.transacciones.superheroes.dao.RepositorioSuperpoder;
+import dual.transacciones.superheroes.dao.mapper.MapperSuperpoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import dual.transacciones.superheroes.modelo.SuperpoderBean;
+import dual.transacciones.superheroes.dao.modelo.Superpoder;
 
 @Repository
-public class RepositorioSuperpoderImpl implements RepositorioSuperpoder{
+public class RepositorioSuperpoderImpl implements RepositorioSuperpoder {
 
 	@Autowired
 	private JdbcTemplate template;
 	
 	@Override
-	public List<SuperpoderBean> consultar(long identificadorHeroe) {
+	public List<Superpoder> consultar(long identificadorHeroe) {
 		try {
 			return this.template.query("SELECT ID, PODER "
 					+ "FROM HEROE_PODER HP "
@@ -29,7 +31,7 @@ public class RepositorioSuperpoderImpl implements RepositorioSuperpoder{
 	}
 
 	@Override
-	public void crear(long identificadorHeroe, List<SuperpoderBean> superpoderes) {
+	public void crear(long identificadorHeroe, List<Superpoder> superpoderes) {
 		try {
 			
 			superpoderes.stream().forEach( superpoder -> {

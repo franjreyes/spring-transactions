@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="context" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+
+        <jdbcConnection connectionURL="jdbc:postgresql://localhost:5432/iam" driverClass="org.postgresql.Driver" password="postgres" userId="postgres" />
+
+        <javaModelGenerator  targetPackage="com.bl.athlas.iamsvc.persistencia.modelo"        targetProject="src/main/java" />
+        <sqlMapGenerator     targetPackage="com.bl.athlas.iamsvc.persistencia.mapper.sqlmap" targetProject="src/main/resources" />
+        <javaClientGenerator targetPackage="com.bl.athlas.iamsvc.persistencia.mapper"        targetProject="src/main/java" type="XMLMAPPER" />
+
+        <table tableName="MARCO_TRABAJO" modelType="flat" />
+    </context>
+</generatorConfiguration>

@@ -1,20 +1,25 @@
-package dual.transacciones.superheroes.servicio;
+package dual.transacciones.superheroes.servicio.impl;
 
 import java.util.List;
 
+import dual.transacciones.superheroes.excepciones.ImagenException;
+import dual.transacciones.superheroes.excepciones.SuperheroeException;
+import dual.transacciones.superheroes.servicio.ServicioDebilidades;
+import dual.transacciones.superheroes.servicio.ServicioSuperheroes;
+import dual.transacciones.superheroes.servicio.ServicioSuperpoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import dual.transacciones.superheroes.modelo.DebilidadBean;
-import dual.transacciones.superheroes.modelo.SuperheroeBean;
-import dual.transacciones.superheroes.modelo.SuperpoderBean;
-import dual.transacciones.superheroes.repositorio.RepositorioSuperheroes;
+import dual.transacciones.superheroes.dao.modelo.Debilidad;
+import dual.transacciones.superheroes.dao.modelo.Superheroe;
+import dual.transacciones.superheroes.dao.modelo.Superpoder;
+import dual.transacciones.superheroes.dao.RepositorioSuperheroes;
 
 @Service
 @Transactional(rollbackFor = SuperheroeException.class, noRollbackFor = ImagenException.class)
-public class ServicioSuperheroesImpl implements ServicioSuperheroes{
+public class ServicioSuperheroesImpl implements ServicioSuperheroes {
 
 	@Autowired
 	private RepositorioSuperheroes repositorio;
@@ -25,8 +30,8 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes{
 	@Autowired
 	private ServicioDebilidades servicioDebilidades;
 	
-	public List<SuperheroeBean> consultar(){
-		List<SuperheroeBean> superheroes = this.repositorio.consultar();
+	public List<Superheroe> consultar(){
+		List<Superheroe> superheroes = this.repositorio.consultar();
 		if(superheroes.isEmpty()) {
 			return superheroes;
 		}
@@ -40,9 +45,9 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes{
 	}
 
 	@Override
-	public SuperheroeBean consultar(long identificador) throws SuperheroeException {
+	public Superheroe consultar(long identificador) throws SuperheroeException {
 		try {
-			SuperheroeBean superheroe = this.repositorio.consultar(identificador);
+			Superheroe superheroe = this.repositorio.consultar(identificador);
 			superheroe.setSuperpoderes(this.consutarSuperpoderes(identificador));
 			superheroe.setDebilidades(this.consutarDebilidades(identificador));
 
@@ -54,18 +59,18 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes{
 		}
 	}
 	
-	private List<SuperpoderBean> consutarSuperpoderes(long identificador){
+	private List<Superpoder> consutarSuperpoderes(long identificador){
 		return this.servicioSuperpoder.consultar(identificador);
 	}
 
-	private List<DebilidadBean> consutarDebilidades(long identificador){
+	private List<Debilidad> consutarDebilidades(long identificador){
 		return this.servicioDebilidades.consultar(identificador);
 	}
 
 	@Override
-	public void crear(SuperheroeBean superheroe) throws SuperheroeException {
+	public void crear(Superheroe superheroe) throws SuperheroeException {
 		try {
-			SuperheroeBean superheroeExiste = this.repositorio.
+			Superheroe superheroeExiste = this.repositorio.
 					consultar(superheroe.getIdentificador());
 			if(superheroeExiste != null) {
 				throw new SuperheroeException("Ya existe un superhéroe con "
@@ -83,7 +88,7 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes{
 	}
 
 	@Override
-	public void modificar(SuperheroeBean superheroe) throws SuperheroeException {
+	public void modificar(Superheroe superheroe) throws SuperheroeException {
 		try {
 			this.repositorio.consultar(superheroe.getIdentificador());
 			this.repositorio.modificar(superheroe);
@@ -102,7 +107,7 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes{
 		}
 	}
 	
-	private void crearSuperpoderes(SuperheroeBean superheroe) throws SuperheroeException {
+	private void crearSuperpoderes(Superheroe superheroe) throws SuperheroeException {
 		if(superheroe.getSuperpoderes() == null 
 				||  superheroe.getSuperpoderes().isEmpty()) {
 			throw new SuperheroeException("El superhéroe necesita al menos un superpoder");
@@ -112,7 +117,7 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes{
 				superheroe.getSuperpoderes());
 	}
 
-	private void crearDebilidades(SuperheroeBean superheroe) throws SuperheroeException {
+	private void crearDebilidades(Superheroe superheroe) throws SuperheroeException {
 		if(superheroe.getDebilidades() == null 
 				||  superheroe.getDebilidades().isEmpty()) {
 			throw new SuperheroeException("El superhéroe necesita al menos una debilidad");

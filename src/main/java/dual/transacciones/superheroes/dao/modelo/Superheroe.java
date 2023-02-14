@@ -1,8 +1,8 @@
-package dual.transacciones.superheroes.modelo;
+package dual.transacciones.superheroes.dao.modelo;
 
 import java.util.List;
 
-public class SuperheroeBean {
+public class Superheroe {
 
 	private long identificador;
 	
@@ -12,9 +12,9 @@ public class SuperheroeBean {
 	
 	private String imagen;
 	
-	private List<SuperpoderBean> superpoderes;
+	private List<Superpoder> superpoderes;
 	
-	private List<DebilidadBean> debilidades;
+	private List<Debilidad> debilidades;
 
 	public long getIdentificador() {
 		return identificador;
@@ -48,19 +48,19 @@ public class SuperheroeBean {
 		this.imagen = imagen;
 	}
 
-	public List<SuperpoderBean> getSuperpoderes() {
+	public List<Superpoder> getSuperpoderes() {
 		return superpoderes;
 	}
 
-	public void setSuperpoderes(List<SuperpoderBean> superpoderes) {
+	public void setSuperpoderes(List<Superpoder> superpoderes) {
 		this.superpoderes = superpoderes;
 	}
 
-	public List<DebilidadBean> getDebilidades() {
+	public List<Debilidad> getDebilidades() {
 		return debilidades;
 	}
 
-	public void setDebilidades(List<DebilidadBean> debilidades) {
+	public void setDebilidades(List<Debilidad> debilidades) {
 		this.debilidades = debilidades;
 	}
 	

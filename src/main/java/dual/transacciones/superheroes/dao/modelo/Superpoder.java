@@ -1,6 +1,6 @@
-package dual.transacciones.superheroes.modelo;
+package dual.transacciones.superheroes.dao.modelo;
 
-public class SuperpoderBean {
+public class Superpoder {
 
 	private long identificador;
 	

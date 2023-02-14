@@ -1,14 +1,15 @@
-package dual.transacciones.superheroes.servicio;
+package dual.transacciones.superheroes.servicio.impl;
 
 import java.util.List;
 
+import dual.transacciones.superheroes.servicio.ServicioSuperpoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import dual.transacciones.superheroes.modelo.SuperpoderBean;
-import dual.transacciones.superheroes.repositorio.RepositorioSuperpoder;
+import dual.transacciones.superheroes.dao.modelo.Superpoder;
+import dual.transacciones.superheroes.dao.RepositorioSuperpoder;
 
 @Service
 @Transactional(propagation = Propagation.MANDATORY)
@@ -18,12 +19,12 @@ public class ServicioSuperpoderImpl implements ServicioSuperpoder {
 	private RepositorioSuperpoder repositorio;
 	
 	@Override
-	public List<SuperpoderBean> consultar(long identificadorHeroe) {
+	public List<Superpoder> consultar(long identificadorHeroe) {
 		return this.repositorio.consultar(identificadorHeroe);
 	}
 
 	@Override
-	public void crear(long identificadorHeroe, List<SuperpoderBean> superpoderes) {
+	public void crear(long identificadorHeroe, List<Superpoder> superpoderes) {
 		this.repositorio.crear(identificadorHeroe, superpoderes);
 	}
 

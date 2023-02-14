@@ -1,4 +1,4 @@
-package dual.transacciones.superheroes.servicio;
+package dual.transacciones.superheroes.excepciones;
 
 @SuppressWarnings("serial")
 public class SuperheroeException extends Exception{
