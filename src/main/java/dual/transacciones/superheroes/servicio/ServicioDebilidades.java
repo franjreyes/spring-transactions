@@ -1,15 +1,15 @@
 package dual.transacciones.superheroes.servicio;
 
-import java.util.List;
-
 import dual.transacciones.superheroes.dao.modelo.Debilidad;
+
+import java.util.List;
 
 public interface ServicioDebilidades {
 
-	List<Debilidad> consultar(long identificadorHeroe);
+	List<Debilidad> consultarPorSuperheroeId(Integer superheroeId);
 	
-	void crear(long identificadorHeroe, List<Debilidad> superpoderes);
+	void addDebilidadASupuerheroe(Integer superheroeId, List<Debilidad> debilidades);
 
-	void eliminar(long identificadorHeroe);
+	void quitarDebilidadASuperheroe(Integer superheroeId);
 
 }

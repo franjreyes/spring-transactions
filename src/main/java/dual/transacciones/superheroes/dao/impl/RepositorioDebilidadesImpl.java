@@ -1,59 +1,56 @@
 package dual.transacciones.superheroes.dao.impl;
 
-import java.util.List;
-
 import dual.transacciones.superheroes.dao.RepositorioDebilidades;
-import dual.transacciones.superheroes.dao.mapper.MapperDebilidad;
+import dual.transacciones.superheroes.dao.mapper.DebilidadMapper;
+import dual.transacciones.superheroes.dao.modelo.Debilidad;
+import dual.transacciones.superheroes.dao.modelo.SuperheroeDebilidad;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import dual.transacciones.superheroes.dao.modelo.Debilidad;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class RepositorioDebilidadesImpl implements RepositorioDebilidades {
 
-	@Autowired
-	private JdbcTemplate template;
-	
-	@Override
-	public List<Debilidad> consultar(long identificadorHeroe) {
-		try {
-			return this.template.query("SELECT ID, DEBILIDAD "
-					+ "FROM HEROE_DEBILIDAD HD "
-					+ "INNER JOIN DEBILIDADES SP ON HD.IDDEBILIDAD=SP.ID  "
-					+ "WHERE IDHEROE = ?",
-					new MapperDebilidad(), identificadorHeroe);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-	}
+    private final DebilidadMapper mapper;
 
-	@Override
-	public void crear(long identificadorHeroe, List<Debilidad> debilidades) {
-		try {
-			
-			debilidades.stream().forEach( debilidad -> {
-				this.template.update("INSERT INTO HEROE_DEBILIDAD VALUES(?,?)", 
-						identificadorHeroe, debilidad.getIdentificador());
-			});
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-	}
+    @Autowired
+    public RepositorioDebilidadesImpl(DebilidadMapper mapper) {
+        this.mapper = mapper;
+    }
 
-	@Override
-	public void eliminar(long identificadorHeroe) {
-		try {
-			this.template.update("DELETE FROM HEROE_DEBILIDAD WHERE IDHEROE = ?", 
-					identificadorHeroe);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-	}
+    @Override
+    public List<Debilidad> getBySuperheroeId(Integer superheroeId) {
+        try {
+            return this.mapper.getBySuperheroeId(superheroeId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void create(Integer superheroeId, List<Debilidad> debilidades) {
+        try {
+			List<SuperheroeDebilidad> superheroeDebilidades = debilidades.stream()
+							.map(debilidad -> new SuperheroeDebilidad(superheroeId, debilidad.getId()))
+                    .collect(Collectors.toList());
+			this.mapper.insertSuperheroeDebilidades(superheroeDebilidades);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void delete(Integer superheroeId) {
+        try {
+            this.mapper.deleteBySuperheroeId(superheroeId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
 }

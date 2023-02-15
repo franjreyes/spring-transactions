@@ -1,14 +1,14 @@
 package dual.transacciones.superheroes.dao;
 
-import java.util.List;
-
 import dual.transacciones.superheroes.dao.modelo.Superpoder;
+
+import java.util.List;
 
 public interface RepositorioSuperpoder {
 
-	List<Superpoder> consultar(long identificadorHeroe);
+	List<Superpoder> consultar(Integer superheroeId);
 	
-	void crear(long identificadorHeroe, List<Superpoder> superpoderes);
+	void crear(Integer superheroeId, List<Superpoder> superpoderes);
 
-	void eliminar(long identificadorHeroe);
+	void eliminar(Integer superheroeId);
 }

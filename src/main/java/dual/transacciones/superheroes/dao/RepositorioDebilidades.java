@@ -1,14 +1,14 @@
 package dual.transacciones.superheroes.dao;
 
-import java.util.List;
-
 import dual.transacciones.superheroes.dao.modelo.Debilidad;
+
+import java.util.List;
 
 public interface RepositorioDebilidades {
 
-	List<Debilidad> consultar(long identificadorHeroe);
-	
-	void crear(long identificadorHeroe, List<Debilidad> superpoderes);
+	List<Debilidad> getBySuperheroeId(Integer superheroeId);
 
-	void eliminar(long identificadorHeroe);
+    void create(Integer superheroeId, List<Debilidad> debilidad);
+
+    void delete(Integer superheroeId);
 }

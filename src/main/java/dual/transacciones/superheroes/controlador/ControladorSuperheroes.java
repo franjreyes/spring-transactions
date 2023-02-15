@@ -2,6 +2,7 @@ package dual.transacciones.superheroes.controlador;
 
 import java.util.List;
 
+import dual.transacciones.superheroes.dao.modelo.Superheroe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dual.transacciones.superheroes.dao.modelo.Superheroe;
 import dual.transacciones.superheroes.excepciones.ImagenException;
 import dual.transacciones.superheroes.servicio.ServicioSuperheroes;
 import dual.transacciones.superheroes.excepciones.SuperheroeException;
+
 
 @RestController
 @RequestMapping("/superheroes")
@@ -31,11 +32,10 @@ public class ControladorSuperheroes {
 		return this.servicio.consultar();
 	}
 
-	@GetMapping("/{identificador}")
-	public ResponseEntity<?> consultar(@PathVariable long identificador) {
+	@GetMapping("/{superheroeId}")
+	public ResponseEntity<?> consultar(@PathVariable Integer superheroeId) {
 		try {
-			return new ResponseEntity<>(this.servicio.consultar(identificador),
-					HttpStatus.OK);
+			return ResponseEntity.ok(this.servicio.consultar(superheroeId));
 		} catch (SuperheroeException e) {
 			return new ResponseEntity<>(e.getMessage(),
 					HttpStatus.BAD_REQUEST);
@@ -61,8 +61,8 @@ public class ControladorSuperheroes {
 		}
 	}
 
-	@PatchMapping
-	public ResponseEntity<String> modificar(@RequestBody Superheroe superheroe) {
+	@PatchMapping("/{superheroeId}")
+	public ResponseEntity<String> modificar(@PathVariable Integer superheroeId, @RequestBody Superheroe superheroe) {
 		try {
 			this.servicio.modificar(superheroe);
 
@@ -80,13 +80,13 @@ public class ControladorSuperheroes {
 		}
 	}
 
-	@DeleteMapping("/{identificador}")
-	public ResponseEntity<String> eliminar(@PathVariable long identificador) {
+	@DeleteMapping("/{superheroeId}")
+	public ResponseEntity<String> eliminar(@PathVariable Integer superheroeId) {
 		try {
-			this.servicio.eliminar(identificador);
+			this.servicio.eliminar(superheroeId);
 
 			return new ResponseEntity<>("El superhéroe con identificador " 
-			+ identificador + " ha sido eliminado correctamente.", 
+			+ superheroeId + " ha sido eliminado correctamente.",
 			HttpStatus.OK);
 		} catch (SuperheroeException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

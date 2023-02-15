@@ -3,23 +3,25 @@ package dual.transacciones.superheroes.dao.impl;
 import java.util.List;
 
 import dual.transacciones.superheroes.dao.RepositorioSuperheroes;
-import dual.transacciones.superheroes.dao.mapper.MapperSuperheroe;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-
+import dual.transacciones.superheroes.dao.mapper.SuperheroeMapper;
 import dual.transacciones.superheroes.dao.modelo.Superheroe;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class RepositorioSuperheroesImpl implements RepositorioSuperheroes {
 
+	private final SuperheroeMapper mapper;
+
 	@Autowired
-	private JdbcTemplate template;
+	public RepositorioSuperheroesImpl(SuperheroeMapper mapper) {
+		this.mapper = mapper;
+	}
 	
 	public List<Superheroe> consultar() {
 		try {
-			return this.template.query("select * from superheroes", new MapperSuperheroe());
-		} 
+			return this.mapper.selectAll();
+		}
 		catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -27,10 +29,9 @@ public class RepositorioSuperheroesImpl implements RepositorioSuperheroes {
 	}
 
 	@Override
-	public Superheroe consultar(long identificador) {
+	public Superheroe consultar(Integer superheroeId) {
 		try {
-			return this.template.queryForObject("select * from superheroes where id = ?", 
-					new MapperSuperheroe(), identificador);
+			return this.mapper.selectByPrimaryKey(superheroeId);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -41,11 +42,7 @@ public class RepositorioSuperheroesImpl implements RepositorioSuperheroes {
 	@Override
 	public void crear(Superheroe superheroe) {
 		try {
-			this.template.update("INSERT INTO SUPERHEROES VALUES(?,?,?,?)", 
-					superheroe.getIdentificador(), 
-					superheroe.getNombre(), 
-					superheroe.getAlterego(), 
-					superheroe.getImagen());
+			this.mapper.insert(superheroe);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -55,12 +52,7 @@ public class RepositorioSuperheroesImpl implements RepositorioSuperheroes {
 	@Override
 	public void modificar(Superheroe superheroe) {
 		try {
-			this.template.update("UPDATE SUPERHEROES SET NOMBRE = ?, "
-					+ "ALTEREGO = ?, IMG = ? WHERE ID = ?", 
-					superheroe.getNombre(), 
-					superheroe.getAlterego(), 
-					superheroe.getImagen(),
-					superheroe.getIdentificador());
+			this.mapper.updateByPrimaryKey(superheroe);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -69,10 +61,9 @@ public class RepositorioSuperheroesImpl implements RepositorioSuperheroes {
 	}
 
 	@Override
-	public void eliminar(long identificador) {
+	public void eliminar(Integer superheroeId) {
 		try {
-			this.template.update("DELETE FROM SUPERHEROES WHERE ID = ?", 
-					identificador);
+			this.mapper.deleteByPrimaryKey(superheroeId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

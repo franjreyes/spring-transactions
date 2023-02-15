@@ -1,29 +1,29 @@
 package dual.transacciones.superheroes.dao.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import dual.transacciones.superheroes.dao.RepositorioSuperpoder;
-import dual.transacciones.superheroes.dao.mapper.MapperSuperpoder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-
+import dual.transacciones.superheroes.dao.mapper.SuperpoderMapper;
+import dual.transacciones.superheroes.dao.modelo.SuperheroeSuperpoder;
 import dual.transacciones.superheroes.dao.modelo.Superpoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class RepositorioSuperpoderImpl implements RepositorioSuperpoder {
 
+	private final SuperpoderMapper mapper;
+
 	@Autowired
-	private JdbcTemplate template;
-	
+	public RepositorioSuperpoderImpl(SuperpoderMapper mapper) {
+		this.mapper = mapper;
+	}
+
 	@Override
-	public List<Superpoder> consultar(long identificadorHeroe) {
+	public List<Superpoder> consultar(Integer superheroeId) {
 		try {
-			return this.template.query("SELECT ID, PODER "
-					+ "FROM HEROE_PODER HP "
-					+ "INNER JOIN SUPERPODERES SP ON HP.IDPODER=SP.ID  "
-					+ "WHERE IDHEROE = ?",
-					new MapperSuperpoder(), identificadorHeroe);
+			return this.mapper.getBySuperheroeId(superheroeId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -31,14 +31,13 @@ public class RepositorioSuperpoderImpl implements RepositorioSuperpoder {
 	}
 
 	@Override
-	public void crear(long identificadorHeroe, List<Superpoder> superpoderes) {
+	public void crear(Integer superheroeId, List<Superpoder> superpoderes) {
 		try {
-			
-			superpoderes.stream().forEach( superpoder -> {
-				this.template.update("INSERT INTO HEROE_PODER VALUES(?,?)", 
-						identificadorHeroe, superpoder.getIdentificador());
-			});
-			
+			List<SuperheroeSuperpoder> superheroeSuperpoderes = superpoderes
+					.stream()
+					.map(superpoder -> new SuperheroeSuperpoder(superheroeId, superpoder.getId()))
+					.collect(Collectors.toList());
+			this.mapper.insertSuperheroeSuperpoderes(superheroeSuperpoderes);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -46,10 +45,9 @@ public class RepositorioSuperpoderImpl implements RepositorioSuperpoder {
 	}
 
 	@Override
-	public void eliminar(long identificadorHeroe) {
+	public void eliminar(Integer superheroeId) {
 		try {
-			this.template.update("DELETE FROM HEROE_PODER WHERE IDHEROE = ?", 
-					identificadorHeroe);
+			this.mapper.deleteBySuperheroeId(superheroeId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

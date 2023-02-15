@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dual.transacciones.superheroes.dao.mapper.SuperpoderMapper">
+  <resultMap id="BaseResultMap" type="dual.transacciones.superheroes.dao.modelo.Superpoder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="superpoder" jdbcType="VARCHAR" property="superpoder" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, superpoder
+  </sql>
+  <insert id="insertSuperheroeSuperpoderes" parameterType="dual.transacciones.superheroes.dao.modelo.SuperheroeSuperpoder">
+    insert into superheroe_superpoder (superheroe_id, superpoder_id)
+    values
+    <foreach collection="superheroeSuperpoderes" item="superheroeSuperpoder" separator=",">
+      (#{superheroeSuperpoder.superheroeId}, #{superheroeSuperpoder.superpoderId})
+    </foreach>
+  </insert>
+  <select id="getBySuperheroeId" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from superpoderes s
+    inner join superheroe_superpoder ss on (
+        s.id = ss.superpoder_id and
+        ss.superheroe_id = #{superheroeId}
+    )
+  </select>
+  <delete id="deleteBySuperheroeId">
+    delete from superheroe_superpoder where superheroe_id = #{superheroeId}
+  </delete>
+</mapper>

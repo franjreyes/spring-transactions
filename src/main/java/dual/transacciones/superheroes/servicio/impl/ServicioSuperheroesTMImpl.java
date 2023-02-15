@@ -1,6 +1,6 @@
 package dual.transacciones.superheroes.servicio.impl;
 
-import dual.transacciones.superheroes.dao.RepositorioSuperheroes;
+import dual.transacciones.superheroes.dao.mapper.SuperheroeMapper;
 import dual.transacciones.superheroes.dao.modelo.Debilidad;
 import dual.transacciones.superheroes.dao.modelo.Superheroe;
 import dual.transacciones.superheroes.dao.modelo.Superpoder;
@@ -9,34 +9,40 @@ import dual.transacciones.superheroes.excepciones.SuperheroeException;
 import dual.transacciones.superheroes.servicio.ServicioDebilidades;
 import dual.transacciones.superheroes.servicio.ServicioSuperheroes;
 import dual.transacciones.superheroes.servicio.ServicioSuperpoder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
 @Service
-@Primary
 @Transactional(rollbackFor = SuperheroeException.class, noRollbackFor = ImagenException.class)
-public class ServicioSuperheroesImpl implements ServicioSuperheroes {
+public class ServicioSuperheroesTMImpl implements ServicioSuperheroes {
 
-    @Autowired
-    private RepositorioSuperheroes repositorio;
+    private final PlatformTransactionManager transactionManager;
+    private final SuperheroeMapper mapper;
+    private final ServicioSuperpoder servicioSuperpoder;
+    private final ServicioDebilidades servicioDebilidades;
 
-    @Autowired
-    private ServicioSuperpoder servicioSuperpoder;
+    public ServicioSuperheroesTMImpl(PlatformTransactionManager transactionManager,
+                                     SuperheroeMapper mapper,
+                                     ServicioSuperpoder servicioSuperpoder,
+                                     ServicioDebilidades servicioDebilidades) {
+        this.transactionManager = transactionManager;
+        this.mapper = mapper;
+        this.servicioSuperpoder = servicioSuperpoder;
+        this.servicioDebilidades = servicioDebilidades;
+    }
 
-    @Autowired
-    private ServicioDebilidades servicioDebilidades;
-
+    @Override
     public List<Superheroe> consultar() {
-        List<Superheroe> superheroes = this.repositorio.consultar();
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        List<Superheroe> superheroes = transactionTemplate.execute(txStatus -> this.mapper.selectAll());
         if (superheroes.isEmpty()) {
             return superheroes;
         }
-
         superheroes.stream().forEach(superheroe -> {
             superheroe.setSuperpoderes(this.consutarSuperpoderes(superheroe.getId()));
             superheroe.setDebilidades(this.consutarDebilidades(superheroe.getId()));
@@ -48,7 +54,8 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes {
     @Override
     public Superheroe consultar(Integer superheroeId) throws SuperheroeException {
         try {
-            Superheroe superheroe = this.repositorio.consultar(superheroeId);
+            TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+            Superheroe superheroe = transactionTemplate.execute(txStatus -> this.mapper.selectByPrimaryKey(superheroeId));
             superheroe.setSuperpoderes(this.consutarSuperpoderes(superheroeId));
             superheroe.setDebilidades(this.consutarDebilidades(superheroeId));
 
@@ -70,9 +77,9 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes {
 
     @Override
     public void crear(Superheroe superheroe) throws SuperheroeException {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         try {
-            Superheroe superheroeExiste = this.repositorio.
-                    consultar(superheroe.getId());
+            Superheroe superheroeExiste = transactionTemplate.execute(txStatus -> this.mapper.selectByPrimaryKey(superheroe.getId()));
             if (superheroeExiste != null) {
                 throw new SuperheroeException("Ya existe un superhéroe con "
                         + "el identificador " + superheroe.getId());
@@ -81,7 +88,10 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes {
             ;
         }
 
-        this.repositorio.crear(superheroe);
+        transactionTemplate.execute(txStatus -> {
+            this.mapper.insert(superheroe);
+            return null;
+        });
 
         if (superheroe.getImagen() == null || superheroe.getImagen().length() == 0) {
             throw new ImagenException();
@@ -91,12 +101,22 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes {
     @Override
     public void modificar(Superheroe superheroe) throws SuperheroeException {
         try {
-            this.repositorio.consultar(superheroe.getId());
-            this.repositorio.modificar(superheroe);
-            this.servicioSuperpoder.quitarSuperpoderASuperheroe(superheroe.getId());
-            this.addSuperpoderes(superheroe);
-            this.servicioDebilidades.quitarDebilidadASuperheroe(superheroe.getId());
-            this.addDebilidades(superheroe);
+            TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+            transactionTemplate.execute(txStatus -> {
+                this.mapper.selectByPrimaryKey(superheroe.getId());
+                this.mapper.updateByPrimaryKey(superheroe);
+                this.servicioSuperpoder.quitarSuperpoderASuperheroe(superheroe.getId());
+                return null;
+            });
+            
+            this.crearSuperpoderes(superheroe);
+            
+            transactionTemplate.execute(txStatus -> {
+                this.servicioDebilidades.quitarDebilidadASuperheroe(superheroe.getId());
+                return null;
+            });
+            
+            this.crearDebilidades(superheroe);
 
             if (superheroe.getImagen() == null || superheroe.getImagen().length() == 0) {
                 throw new ImagenException();
@@ -108,7 +128,7 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes {
         }
     }
 
-    private void addSuperpoderes(Superheroe superheroe) throws SuperheroeException {
+    private void crearSuperpoderes(Superheroe superheroe) throws SuperheroeException {
         if (superheroe.getSuperpoderes() == null
                 || superheroe.getSuperpoderes().isEmpty()) {
             throw new SuperheroeException("El superhéroe necesita al menos un superpoder");
@@ -118,7 +138,7 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes {
                 superheroe.getSuperpoderes());
     }
 
-    private void addDebilidades(Superheroe superheroe) throws SuperheroeException {
+    private void crearDebilidades(Superheroe superheroe) throws SuperheroeException {
         if (superheroe.getDebilidades() == null
                 || superheroe.getDebilidades().isEmpty()) {
             throw new SuperheroeException("El superhéroe necesita al menos una debilidad");
@@ -131,10 +151,14 @@ public class ServicioSuperheroesImpl implements ServicioSuperheroes {
     @Override
     public void eliminar(Integer superheroeId) throws SuperheroeException {
         try {
-            this.repositorio.consultar(superheroeId);
-            this.servicioSuperpoder.quitarSuperpoderASuperheroe(superheroeId);
-            this.servicioDebilidades.quitarDebilidadASuperheroe(superheroeId);
-            this.repositorio.eliminar(superheroeId);
+            TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+            transactionTemplate.execute(txStatus -> {
+                this.mapper.selectByPrimaryKey(superheroeId);
+                this.servicioSuperpoder.quitarSuperpoderASuperheroe(superheroeId);
+                this.servicioDebilidades.quitarDebilidadASuperheroe(superheroeId);
+                this.mapper.deleteByPrimaryKey(superheroeId);
+                return null;
+            });
         } catch (EmptyResultDataAccessException e) {
             throw new SuperheroeException("El superhéroe con identificador "
                     + superheroeId + " no existe.");

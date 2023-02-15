@@ -2,23 +2,29 @@ package dual.transacciones.superheroes.dao.modelo;
 
 public class Superpoder {
 
-	private long identificador;
-	
-	private String poder;
+    private Integer id;
 
-	public long getIdentificador() {
-		return identificador;
+    private String superpoder;
+
+	public Superpoder(Integer id, String superpoder) {
+		super();
+		this.id = id;
+		this.superpoder = superpoder;
 	}
 
-	public void setIdentificador(long identificador) {
-		this.identificador = identificador;
+	public Integer getId() {
+		return id;
 	}
 
-	public String getPoder() {
-		return poder;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
-	public void setPoder(String poder) {
-		this.poder = poder;
+	public String getSuperpoder() {
+		return superpoder;
+	}
+
+	public void setSuperpoder(String superpoder) {
+		this.superpoder = superpoder;
 	}
 }

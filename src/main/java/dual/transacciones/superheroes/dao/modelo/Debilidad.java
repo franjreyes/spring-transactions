@@ -2,16 +2,22 @@ package dual.transacciones.superheroes.dao.modelo;
 
 public class Debilidad {
 
-	private long identificador;
-	
-	private String debilidad;
+    private Integer id;
 
-	public long getIdentificador() {
-		return identificador;
+    private String debilidad;
+
+	public Debilidad(Integer id, String debilidad) {
+		super();
+		this.id = id;
+		this.debilidad = debilidad;
 	}
 
-	public void setIdentificador(long identificador) {
-		this.identificador = identificador;
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getDebilidad() {
@@ -21,5 +27,4 @@ public class Debilidad {
 	public void setDebilidad(String debilidad) {
 		this.debilidad = debilidad;
 	}
-
 }

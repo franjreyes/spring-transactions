@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dual.transacciones.superheroes.dao.mapper.DebilidadMapper">
+  <resultMap id="BaseResultMap" type="dual.transacciones.superheroes.dao.modelo.Debilidad">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="debilidad" jdbcType="VARCHAR" property="debilidad" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, debilidad
+  </sql>
+  <insert id="insertSuperheroeDebilidades" parameterType="dual.transacciones.superheroes.dao.modelo.SuperheroeDebilidad">
+    insert into superheroe_debilidad (superheroe_id, debilidad_id)
+    values
+    <foreach collection="superheroeDebilidades" item="superheroeDebilidad" separator=",">
+           (#{superheroeDebilidad.superheroeId}, #{superheroeDebilidad.debilidadId})
+    </foreach>
+  </insert>
+  <select id="getBySuperheroeId" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from debilidades d
+    inner join superheroe_debilidad sd on (
+        d.id = sd.debilidad_id and
+        sd.superheroe_id = #{superheroeId}
+    )
+  </select>
+  <delete id="deleteBySuperheroeId">
+    delete from superheroe_debilidad where superheroe_id = #{superheroeId}
+  </delete>
+</mapper>
