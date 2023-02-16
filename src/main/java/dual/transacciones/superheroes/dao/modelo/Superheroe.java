@@ -1,81 +1,49 @@
 package dual.transacciones.superheroes.dao.modelo;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "superheroes")
+@Data
+@EqualsAndHashCode(of = "id")
 public class Superheroe {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(length = 255, nullable = false)
     private String nombre;
 
+    @Column(length = 255, nullable = false)
     private String alterego;
 
     private String imagen;
 
-    private List<Debilidad> debilidades;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "superheroe_debilidad",
+            joinColumns = {@JoinColumn(name = "superheroe_id")},
+            inverseJoinColumns = {@JoinColumn(name = "debilidad_id")})
+    private Set<Debilidad> debilidades;
 
-    private List<Superpoder> superpoderes;
-    
-    public Superheroe(Integer id, String nombre, String alterego, String imagen, List<Debilidad> debilidades,
-			List<Superpoder> superpoderes) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.alterego = alterego;
-		this.imagen = imagen;
-		this.debilidades = debilidades;
-		this.superpoderes = superpoderes;
-	}
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "superheroe_superpoder",
+            joinColumns = {@JoinColumn(name = "superheroe_id")},
+            inverseJoinColumns = {@JoinColumn(name = "superpoder_id")})
+    private Set<Superpoder> superpoderes;
 
-	public Superheroe(Integer id, String nombre, String alterego, String imagen) {
-        this(id,nombre,alterego,imagen,null,null);
+    public Superheroe(Integer id, String nombre, String alterego, String imagen) {
+        this(id, nombre, alterego, imagen, null, null);
     }
-
-    public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public String getAlterego() {
-		return alterego;
-	}
-
-	public void setAlterego(String alterego) {
-		this.alterego = alterego;
-	}
-
-	public String getImagen() {
-		return imagen;
-	}
-
-	public void setImagen(String imagen) {
-		this.imagen = imagen;
-	}
-
-	public List<Debilidad> getDebilidades() {
-		return debilidades;
-	}
-
-	public void setDebilidades(List<Debilidad> debilidades) {
-		this.debilidades = debilidades;
-	}
-
-	public List<Superpoder> getSuperpoderes() {
-		return superpoderes;
-	}
-
-	public void setSuperpoderes(List<Superpoder> superpoderes) {
-		this.superpoderes = superpoderes;
-	}
 }

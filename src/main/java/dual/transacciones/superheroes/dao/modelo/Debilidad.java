@@ -1,30 +1,24 @@
 package dual.transacciones.superheroes.dao.modelo;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "debilidades")
+@Data
+@EqualsAndHashCode(of = "id")
 public class Debilidad {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(length = 255)
     private String debilidad;
-
-	public Debilidad(Integer id, String debilidad) {
-		super();
-		this.id = id;
-		this.debilidad = debilidad;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getDebilidad() {
-		return debilidad;
-	}
-
-	public void setDebilidad(String debilidad) {
-		this.debilidad = debilidad;
-	}
 }
